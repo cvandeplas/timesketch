@@ -19,6 +19,7 @@ limitations under the License.
     :show-tags="showTags"
     :show-data-types="showDataTypes"
     :show-saved-searches="showSavedSearches"
+    :search-mode="searchMode"
   >
     <template v-slot:header>
       <div class="pa-4 pb-0">
@@ -32,7 +33,15 @@ limitations under the License.
             <b>{{ errorText }}</b>
           </p>
           <p>Suggestions:</p>
-          <ul>
+          <ul v-if="searchMode === 'wildcard'">
+            <li>Ensure search terms contain wildcard characters (e.g. <code>*searchterm*</code>).</li>
+            <li>Do not escape special characters with backslashes. Matches are literal.</li>
+            <li>Encase terms containing <code>:</code> (like URLs, paths, or MACs) in double-quotes, e.g. <code>"*count: 1*"</code>.</li>
+            <li>Check for field typos: Ensure that target fields (e.g. <code>message:</code>) are spelled correctly and support wildcard searches.</li>
+            <li>Ensure boolean operators (<code>AND</code>, <code>OR</code>, <code>NOT</code>) are capitalized and correctly positioned.</li>
+            <li>Try some of the wildcard search examples below.</li>
+          </ul>
+          <ul v-else>
             <li>Avoid leading wildcards like <code>*searchterm*</code></li>
             <li>Try searching a specific field like <code>message:*searchterm*</code></li>
             <li>Escape <a href="https://docs.opensearch.org/latest/query-dsl/full-text/query-string/#reserved-characters" target="_blank">reserved characters</a> in your query.</li>
@@ -59,6 +68,10 @@ export default {
     errorText: {
       type: String,
       default: 'An unknown error occurred.',
+    },
+    searchMode: {
+      type: String,
+      default: 'query_string',
     },
   },
   components: {
